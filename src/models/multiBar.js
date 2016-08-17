@@ -15,14 +15,17 @@ nv.models.multiBar = function() {
         , container = null
         , getX = function(d) { return d.x }
         , getY = function(d) { return d.y }
-        , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-        , clipEdge = true
+        , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always
+                       // do chart.forceY([]) to remove
+        , clipEdge = false
+        , overlap = false
         , stacked = false
         , stackOffset = 'zero' // options include 'silhouette', 'wiggle', 'expand', 'zero', or a custom function
         , color = nv.utils.defaultColor()
         , hideable = false
         , barColor = null // adding the ability to set the color for each rather than the whole group
-        , disabled // used in conjunction with barColor to communicate from multiBarHorizontalChart what series are disabled
+        , disabled // used in conjunction with barColor to communicate from multiBarHorizontalChart what series are
+                   // disabled
         , duration = 500
         , xDomain
         , yDomain
@@ -148,7 +151,8 @@ nv.models.multiBar = function() {
             }).concat(forceY)))
             .range(yRange || [availableHeight, 0]);
 
-            // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
+            // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data
+            // point
             if (x.domain()[0] === x.domain()[1])
                 x.domain()[0] ?
                     x.domain([x.domain()[0] - x.domain()[0] * 0.01, x.domain()[1] + x.domain()[1] * 0.01])
@@ -226,7 +230,10 @@ nv.models.multiBar = function() {
                     .attr('y', function(d,i,j) { return y0(stacked && !data[j].nonStackable ? d.y0 : 0) || 0 })
                     .attr('height', 0)
                     .attr('width', function(d,i,j) { return x.rangeBand() / (stacked && !data[j].nonStackable ? 1 : data.length) })
-                    .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+                    .attr('transform', function(d, i, j) {
+                        /* */
+                        return 'translate(' + x(getX(d,i)) + ',0)';
+                    })
                 ;
             bars
                 .style('fill', function(d,i,j){ return color(d, j, i);  })
@@ -275,7 +282,37 @@ nv.models.multiBar = function() {
                 });
             bars
                 .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
-                .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+                .attr('transform', function(d,i,j) {
+                    if(!overlap) {
+                        return 'translate(' + x(getX(d, i)) + ',0)';
+                    }
+
+                    var w = (x.rangeBand() / (stacked && !data[j].nonStackable
+                        ? 1
+                        : data.length));
+
+                    var sectionWidth = availableWidth / (bars.enter()[0].length - 1);
+
+                    if(bars.enter().length == 2) {
+                        var tX = ((i - 0.5) * w + i * w
+                        + (i * (sectionWidth - 2 * w)));
+
+                        var scale = 1;
+
+                        if(d.series == 0) {
+                            scale = 2;
+                            tX = tX / 2 - w / 4
+                        } else if(d.series == 1) {
+                            tX = tX - w * 1.5
+                        }
+
+                        return 'scale(' + scale + ',1) translate(' + tX + ',0)';
+                    } else {
+                        return 'translate(' + ((i - 0.5) * w
+                            + i * (sectionWidth - w))
+                            + ',0)';
+                    }
+                });
 
             if (barColor) {
                 if (!disabled) disabled = data.map(function() { return true });
@@ -385,6 +422,7 @@ nv.models.multiBar = function() {
 
     chart._options = Object.create({}, {
         // simple options, just get/set the necessary values
+        overlap: {get: function(){return overlap;}, set: function(_){overlap=_;}},
         width:   {get: function(){return width;}, set: function(_){width=_;}},
         height:  {get: function(){return height;}, set: function(_){height=_;}},
         x:       {get: function(){return getX;}, set: function(_){getX=_;}},

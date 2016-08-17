@@ -5,8 +5,9 @@ nv.models.multiChart = function() {
     // Public Variables with Default Settings
     //------------------------------------------------------------
 
-    var margin = {top: 30, right: 20, bottom: 50, left: 60},
+    var margin = {top: 30, right: 30, bottom: 50, left: 60},
         color = nv.utils.defaultColor(),
+        overlap = false,
         width = null,
         height = null,
         showLegend = true,
@@ -168,10 +169,12 @@ nv.models.multiChart = function() {
                 .height(availableHeight)
                 .color(color_array.filter(function(d,i) { return !data[i].disabled && data[i].yAxis == 2 && data[i].type == 'scatter'}));
             bars1
+                .overlap(overlap)
                 .width(availableWidth)
                 .height(availableHeight)
                 .color(color_array.filter(function(d,i) { return !data[i].disabled && data[i].yAxis == 1 && data[i].type == 'bar'}));
             bars2
+                .overlap(overlap)
                 .width(availableWidth)
                 .height(availableHeight)
                 .color(color_array.filter(function(d,i) { return !data[i].disabled && data[i].yAxis == 2 && data[i].type == 'bar'}));
@@ -245,7 +248,7 @@ nv.models.multiChart = function() {
                 .tickSize(-availableHeight, 0);
 
             g.select('.nv-x.nv-axis')
-                .attr('transform', 'translate(0,' + availableHeight + ')');
+                .attr('transform', 'translate(0,' + (availableHeight + 20) + ')');
             d3.transition(g.select('.nv-x.nv-axis'))
                 .call(xAxis);
 
@@ -264,9 +267,16 @@ nv.models.multiChart = function() {
             d3.transition(g.select('.nv-y2.nv-axis'))
                 .call(yAxis2);
 
-            g.select('.nv-y1.nv-axis')
+            if(overlap) {
+                g.select('.nv-y1.nv-axis')
+                .attr('transform', 'translate(-'
+                    + availableWidth / ((series1.length || 1) * 16)
+                    + ',0)');
+            } else {
+                g.select('.nv-y1.nv-axis')
                 .classed('nv-disabled', series1.length ? false : true)
                 .attr('transform', 'translate(' + x.range()[0] + ',0)');
+            }
 
             g.select('.nv-y2.nv-axis')
                 .classed('nv-disabled', series2.length ? false : true)
@@ -515,6 +525,7 @@ nv.models.multiChart = function() {
 
     chart._options = Object.create({}, {
         // simple options, just get/set the necessary values
+        overlap:      {get: function(){return overlap;}, set: function(_){overlap=_;}},
         width:      {get: function(){return width;}, set: function(_){width=_;}},
         height:     {get: function(){return height;}, set: function(_){height=_;}},
         showLegend: {get: function(){return showLegend;}, set: function(_){showLegend=_;}},
