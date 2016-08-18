@@ -1,6 +1,6 @@
 {
   "name": "pop-nvd3",
-  "version": "1.8.8",
+  "version": "1.8.11",
   "description": "Inspired by the work of Mike Bostock's [Towards Reusable Charts](http://bost.ocks.org/mike/chart/), and supported by a combined effort of [Novus](http://www.novus.com) and the NVD3 community.",
   "main": "build/nv.d3.js",
   "scripts": {

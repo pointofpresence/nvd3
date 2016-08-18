@@ -1,4 +1,4 @@
-/* nvd3 version 1.8.7 (undefined) 2016-08-17 */
+/* nvd3 version 1.8.10 (undefined) 2016-08-18 */
 (function(){
 
 // set up main nv object
@@ -8128,7 +8128,9 @@ nv.models.multiBar = function() {
                     })
                     .attr('y', function(d,i,j) { return y0(stacked && !data[j].nonStackable ? d.y0 : 0) || 0 })
                     .attr('height', 0)
-                    .attr('width', function(d,i,j) { return x.rangeBand() / (stacked && !data[j].nonStackable ? 1 : data.length) })
+                    .attr('width', function(d,i,j) { 
+                        return x.rangeBand() / (stacked && !data[j].nonStackable ? 1 : data.length) 
+                    })
                     .attr('transform', function(d, i, j) {
                         /* */
                         return 'translate(' + x(getX(d,i)) + ',0)';
@@ -8179,6 +8181,7 @@ nv.models.multiBar = function() {
                     });
                     d3.event.stopPropagation();
                 });
+            
             bars
                 .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
                 .attr('transform', function(d,i,j) {
@@ -8196,16 +8199,20 @@ nv.models.multiBar = function() {
                         var tX = ((i - 0.5) * w + i * w
                         + (i * (sectionWidth - 2 * w)));
 
-                        var scale = 1;
+                        //var scale = 1;
 
-                        if(d.series == 0) {
+                       /* if(d.series == 0) {
                             scale = 2;
                             tX = tX / 2 - w / 4
                         } else if(d.series == 1) {
                             tX = tX - w * 1.5
+                        }*/
+
+                        if(d.series == 1) {
+                            tX -=   w 
                         }
 
-                        return 'scale(' + scale + ',1) translate(' + tX + ',0)';
+                        return 'translate(' + tX + ',0)';
                     } else {
                         return 'translate(' + ((i - 0.5) * w
                             + i * (sectionWidth - w))
@@ -8282,7 +8289,17 @@ nv.models.multiBar = function() {
                     .attr('x', function(d,i) {
                         return d.series * x.rangeBand() / data.length;
                     })
-                    .attr('width', x.rangeBand() / data.length)
+                    .attr('width',
+
+                        function(d,i,j) {
+                           if( d.series == 1) {
+                               return x.rangeBand() / data.length / 1.5
+                           }
+                            
+                            return x.rangeBand() / data.length 
+                        }
+                        
+                        )
                     .attr('y', function(d,i) {
                         return getY(d,i) < 0 ?
                             y(0) :
@@ -14793,5 +14810,5 @@ nv.models.sunburstChart = function() {
 
 };
 
-nv.version = "1.8.7";
+nv.version = "1.8.10";
 })();
