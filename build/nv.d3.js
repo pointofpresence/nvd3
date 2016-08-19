@@ -1,4 +1,4 @@
-/* nvd3 version 1.8.16 (undefined) 2016-08-19 */
+/* nvd3 version 1.8.17 (undefined) 2016-08-19 */
 (function(){
 
 // set up main nv object
@@ -580,7 +580,7 @@ nv.models.tooltip = function() {
             return '';
         }
 
-        if(circle) {
+        if(circle && d && (d.data || d.point)) {
             var color = d.point && d.point.color ? d.point.color : d.color;
             var value = (d.point && d.point.y ? d.point.y : d.data.y) || 0;
             
@@ -14819,5 +14819,5 @@ nv.models.sunburstChart = function() {
 
 };
 
-nv.version = "1.8.16";
+nv.version = "1.8.17";
 })();

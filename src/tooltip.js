@@ -62,7 +62,7 @@ nv.models.tooltip = function() {
             return '';
         }
 
-        if(circle) {
+        if(circle && d && (d.data || d.point)) {
             var color = d.point && d.point.color ? d.point.color : d.color;
             var value = (d.point && d.point.y ? d.point.y : d.data.y) || 0;
             
