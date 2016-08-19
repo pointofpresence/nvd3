@@ -304,6 +304,8 @@ nv.models.multiBar = function() {
                             tX -= w 
                         }
 
+                        tX -= w / 4
+
                         return 'translate(' + tX + ',0)';
                     } else {
                         return 'translate(' + ((i - 0.5) * w
@@ -383,11 +385,13 @@ nv.models.multiBar = function() {
                     })
                     .attr('width',
                         function(d, i, j) {
+                            var w = x.rangeBand() / data.length * 1.5
+
                             if(d.series == 1) {
-                                return x.rangeBand() / data.length / 1.5
+                                return w / 1.5
                             }
-    
-                            return x.rangeBand() / data.length
+
+                            return w
                         }
                     )
                     .attr('y', function(d,i) {

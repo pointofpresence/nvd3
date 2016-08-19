@@ -5,7 +5,7 @@
 Package.describe({
     "name": 'pop-nvd3:pop-nvd3',
     summary: 'Nvd3.org charts.',
-    version: '1.8.11',
+    version: '1.8.16',
     git: "https://github.com/pointofpresence/nvd3.git"
 });
 Package.on_use(function (api) {

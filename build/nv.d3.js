@@ -1,4 +1,4 @@
-/* nvd3 version 1.8.10 (undefined) 2016-08-18 */
+/* nvd3 version 1.8.16 (undefined) 2016-08-19 */
 (function(){
 
 // set up main nv object
@@ -539,11 +539,14 @@ nv.models.tooltip = function() {
         ]
     }
     */
-    var id = "nvtooltip-" + Math.floor(Math.random() * 100000) // Generates a unique id when you create a new tooltip() object.
+    var id = "nvtooltip-" + Math.floor(Math.random() * 100000) // Generates a unique id when you create a new tooltip()
+                                                           // object.
         ,   data = null
+        ,   circle = false
         ,   gravity = 'w'   // Can be 'n','s','e','w'. Determines how tooltip is positioned.
         ,   distance = 25 // Distance to offset tooltip from the mouse location.
-        ,   snapDistance = 0   // Tolerance allowed before tooltip is moved from its current position (creates 'snapping' effect)
+        ,   snapDistance = 0   // Tolerance allowed before tooltip is moved from its current position (creates
+                               // 'snapping' effect)
         ,   classes = null  // Attaches additional CSS classes to the tooltip DIV that is created.
         ,   hidden = true  // Start off hidden, toggle with hide/show functions below.
         ,   hideDelay = 200  // Delay (in ms) before the tooltip hides after calling hide().
@@ -552,7 +555,8 @@ nv.models.tooltip = function() {
         ,   enabled = true  // True -> tooltips are rendered. False -> don't render tooltips.
         ,   duration = 100 // Tooltip movement duration, in ms.
         ,   headerEnabled = true // If is to show the tooltip header.
-        ,   nvPointerEventsClass = "nv-pointer-events-none" // CSS class to specify whether element should not have mouse events.
+        ,   nvPointerEventsClass = "nv-pointer-events-none" // CSS class to specify whether element should not have
+                                                            // mouse events.
     ;
 
     // Format function for the tooltip values column.
@@ -574,6 +578,17 @@ nv.models.tooltip = function() {
     var contentGenerator = function(d) {
         if (d === null) {
             return '';
+        }
+
+        if(circle) {
+            var color = d.point && d.point.color ? d.point.color : d.color;
+            var value = (d.point && d.point.y ? d.point.y : d.data.y) || 0;
+            
+            return "<div " +
+                "style='border:1px solid " + color + "' " +
+                "class='tooltip-circle'>" +
+                value
+            "</div>"
         }
 
         var table = d3.select(document.createElement("table"));
@@ -820,6 +835,7 @@ nv.models.tooltip = function() {
 
     nvtooltip._options = Object.create({}, {
         // simple read/write options
+        circle: {get: function(){return circle;}, set: function(_){circle=_;}},
         duration: {get: function(){return duration;}, set: function(_){duration=_;}},
         gravity: {get: function(){return gravity;}, set: function(_){gravity=_;}},
         distance: {get: function(){return distance;}, set: function(_){distance=_;}},
@@ -8199,18 +8215,11 @@ nv.models.multiBar = function() {
                         var tX = ((i - 0.5) * w + i * w
                         + (i * (sectionWidth - 2 * w)));
 
-                        //var scale = 1;
-
-                       /* if(d.series == 0) {
-                            scale = 2;
-                            tX = tX / 2 - w / 4
-                        } else if(d.series == 1) {
-                            tX = tX - w * 1.5
-                        }*/
-
                         if(d.series == 1) {
-                            tX -=   w 
+                            tX -= w 
                         }
+
+                        tX -= w / 4
 
                         return 'translate(' + tX + ',0)';
                     } else {
@@ -8290,16 +8299,16 @@ nv.models.multiBar = function() {
                         return d.series * x.rangeBand() / data.length;
                     })
                     .attr('width',
+                        function(d, i, j) {
+                            var w = x.rangeBand() / data.length * 1.5
 
-                        function(d,i,j) {
-                           if( d.series == 1) {
-                               return x.rangeBand() / data.length / 1.5
-                           }
-                            
-                            return x.rangeBand() / data.length 
+                            if(d.series == 1) {
+                                return w / 1.5
+                            }
+
+                            return w
                         }
-                        
-                        )
+                    )
                     .attr('y', function(d,i) {
                         return getY(d,i) < 0 ?
                             y(0) :
@@ -14810,5 +14819,5 @@ nv.models.sunburstChart = function() {
 
 };
 
-nv.version = "1.8.10";
+nv.version = "1.8.16";
 })();

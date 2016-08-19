@@ -21,11 +21,14 @@ nv.models.tooltip = function() {
         ]
     }
     */
-    var id = "nvtooltip-" + Math.floor(Math.random() * 100000) // Generates a unique id when you create a new tooltip() object.
+    var id = "nvtooltip-" + Math.floor(Math.random() * 100000) // Generates a unique id when you create a new tooltip()
+                                                           // object.
         ,   data = null
+        ,   circle = false
         ,   gravity = 'w'   // Can be 'n','s','e','w'. Determines how tooltip is positioned.
         ,   distance = 25 // Distance to offset tooltip from the mouse location.
-        ,   snapDistance = 0   // Tolerance allowed before tooltip is moved from its current position (creates 'snapping' effect)
+        ,   snapDistance = 0   // Tolerance allowed before tooltip is moved from its current position (creates
+                               // 'snapping' effect)
         ,   classes = null  // Attaches additional CSS classes to the tooltip DIV that is created.
         ,   hidden = true  // Start off hidden, toggle with hide/show functions below.
         ,   hideDelay = 200  // Delay (in ms) before the tooltip hides after calling hide().
@@ -34,7 +37,8 @@ nv.models.tooltip = function() {
         ,   enabled = true  // True -> tooltips are rendered. False -> don't render tooltips.
         ,   duration = 100 // Tooltip movement duration, in ms.
         ,   headerEnabled = true // If is to show the tooltip header.
-        ,   nvPointerEventsClass = "nv-pointer-events-none" // CSS class to specify whether element should not have mouse events.
+        ,   nvPointerEventsClass = "nv-pointer-events-none" // CSS class to specify whether element should not have
+                                                            // mouse events.
     ;
 
     // Format function for the tooltip values column.
@@ -56,6 +60,17 @@ nv.models.tooltip = function() {
     var contentGenerator = function(d) {
         if (d === null) {
             return '';
+        }
+
+        if(circle) {
+            var color = d.point && d.point.color ? d.point.color : d.color;
+            var value = (d.point && d.point.y ? d.point.y : d.data.y) || 0;
+            
+            return "<div " +
+                "style='border:1px solid " + color + "' " +
+                "class='tooltip-circle'>" +
+                value
+            "</div>"
         }
 
         var table = d3.select(document.createElement("table"));
@@ -302,6 +317,7 @@ nv.models.tooltip = function() {
 
     nvtooltip._options = Object.create({}, {
         // simple read/write options
+        circle: {get: function(){return circle;}, set: function(_){circle=_;}},
         duration: {get: function(){return duration;}, set: function(_){duration=_;}},
         gravity: {get: function(){return gravity;}, set: function(_){gravity=_;}},
         distance: {get: function(){return distance;}, set: function(_){distance=_;}},

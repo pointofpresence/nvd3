@@ -61,6 +61,8 @@
             .overlap(true)
             .color(d3.scale.category10().range());
 
+        chart.tooltip.circle(true);
+        chart.tooltip.gravity('s');
         chart.xAxis.tickFormat(d3.format(',f'));
         chart.yAxis1.tickFormat(d3.format(',.1f'));
         chart.yAxis2.tickFormat(d3.format(',.1f'));
